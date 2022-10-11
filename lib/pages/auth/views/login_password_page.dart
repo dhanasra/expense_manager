@@ -1,3 +1,4 @@
+import 'package:expense_manager/widgets/utils/gap.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -5,7 +6,6 @@ import '../../../app/app.dart';
 import '../../../app/app_routes.dart';
 import '../../../utils/constants.dart';
 import '../../../utils/dimension_utils.dart';
-import '../../../utils/gap.dart';
 import '../../../widgets/background.dart';
 import '../../../widgets/button/button.dart';
 import '../../../widgets/inputs/text_input.dart';
@@ -13,6 +13,7 @@ import '../../../widgets/toaster.dart';
 import '../auth_view_model.dart';
 import '../bloc/auth_bloc.dart';
 
+AuthViewModel viewModel = AuthViewModel();
 class LoginPasswordPage extends StatelessWidget {
   const LoginPasswordPage({Key? key}) : super(key: key);
 
@@ -40,18 +41,25 @@ class MainBody extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
 
-    AuthViewModel viewModel = AuthViewModel();
-
     return SingleChildScrollView(
       padding: Dimensions.padding_20,
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
+      child: Form(
+        key: viewModel.formGlobalKey,
+        child: Column(
         children: [
-          const Text("Login", style: TextStyle(fontWeight: FontWeight.w800, fontSize: 28, color: primary)),
-          const Text("Lorem ipsum dolor sit amet, consectetur.",
-              style: TextStyle(color: promptColor, fontWeight: FontWeight.w500)),
 
-          Gap.big,
+          const Align(
+            alignment: Alignment.centerLeft,
+            child: Text("Login", style: TextStyle(fontWeight: FontWeight.w800, fontSize: 28, color: secondary)),
+          ),
+
+          const Align(
+            alignment: Alignment.centerLeft,
+            child: Text("Manage All Your Cash With Roova Book.",
+              style: TextStyle(color: text, fontWeight: FontWeight.w500, fontSize: 10)),
+          ),
+
+          Gap.large,
 
           ValueListenableBuilder(
               valueListenable: viewModel.passwordViewState,
@@ -60,6 +68,7 @@ class MainBody extends StatelessWidget {
                     isPasswordField: true,
                     controller: AuthViewModel.passwordController,
                     labelText: "Password",
+                    autoFocus: true,
                     obscureText: viewModel.passwordViewState.value,
                     suffixIconClick:
                         () => viewModel.passwordViewState.value=!viewModel.passwordViewState.value,
@@ -73,36 +82,26 @@ class MainBody extends StatelessWidget {
                   onPressed: ()=>const App().setNavigation(context, AppRoutes.forgotPassword),
                   child: const Text("Forgot password ?", style: TextStyle(color: primary)))),
 
-          Gap.big_50,
+          const Gap(size: 50,),
 
-          Align(
-            alignment: Alignment.center,
-            child: BlocBuilder<AuthBloc, AuthState>(
+          BlocBuilder<AuthBloc, AuthState>(
                 builder: (_, state){
                   return ButtonWL(
                       isLoading: state is AuthLoading,
-                      onPressed: ()=>context.read<AuthBloc>().add(LoginEvent(
-                          email: AuthViewModel.emailController.text,
-                          password: AuthViewModel.passwordController.text
-                      )),
-                      label: "Continue"
+                      onPressed: (){
+                        if (viewModel.formGlobalKey.currentState!.validate()) {
+                          FocusScope.of(context).unfocus();                          
+                          context.read<AuthBloc>().add(LoginEvent(
+                                email: AuthViewModel.emailController.text,
+                                password: AuthViewModel.passwordController.text
+                            ));
+                        }
+                      },
+                      label: "CONTINUE"
                   );
-                }),
-          ),
-
-          Gap.big_50,
-
-          Align(
-            alignment: Alignment.center,
-            child: SizedBox(
-              width: Dimensions.getScreenSize(context).width*0.75,
-              child: const Text("Lorem ipsum dolor sit amet, consectetur adipiscing elit.",
-                  textAlign: TextAlign.center,
-                  style: TextStyle(color: info, fontWeight: FontWeight.w500)),
-            ),
-          ),
+                })
         ],
-      ),
+      )),
     );
   }
 }

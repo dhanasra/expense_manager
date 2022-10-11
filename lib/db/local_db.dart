@@ -30,16 +30,16 @@ class LocalStorage{
     await preferences.setString("refresh-token", token);
   }
 
-  static Future<String> getAccessToken() async{
+  static Future<String?> getAccessToken() async{
     var preferences = await SharedPreferences.getInstance();
     var accessToken = preferences.getString("access-token");
-    return accessToken??testAccessToken;
+    return accessToken;
   }
 
-  static Future<String> getRefreshToken() async{
+  static Future<String?> getRefreshToken() async{
     var preferences = await SharedPreferences.getInstance();
     var accessToken = preferences.getString("refresh-token");
-    return accessToken??testRefreshToken;
+    return accessToken;
   }
 
 }

@@ -65,7 +65,7 @@ class TextInput extends StatelessWidget {
         obscuringCharacter: '*',
         style: const TextStyle(
             fontSize: 14,
-            fontWeight: FontWeight.w500
+            fontWeight: FontWeight.w600
         ),
         controller: controller,
       ),

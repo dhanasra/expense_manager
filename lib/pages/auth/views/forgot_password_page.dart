@@ -5,14 +5,15 @@ import '../../../app/app.dart';
 import '../../../app/app_routes.dart';
 import '../../../utils/constants.dart';
 import '../../../utils/dimension_utils.dart';
-import '../../../utils/gap.dart';
 import '../../../widgets/background.dart';
 import '../../../widgets/button/button.dart';
 import '../../../widgets/inputs/text_input.dart';
 import '../../../widgets/toaster.dart';
+import '../../../widgets/utils/gap.dart';
 import '../auth_view_model.dart';
 import '../bloc/auth_bloc.dart';
 
+AuthViewModel viewModel = AuthViewModel();
 class ForgotPasswordPage extends StatelessWidget {
   const ForgotPasswordPage({Key? key}) : super(key: key);
 
@@ -41,48 +42,47 @@ class MainBody extends StatelessWidget {
   Widget build(BuildContext context) {
     return SingleChildScrollView(
       padding: Dimensions.padding_20,
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
+      child: Form(
+        key: viewModel.formGlobalKey,
+        child: Column(
         children: [
-          const Text("Forgot password ?", style: TextStyle(fontWeight: FontWeight.w800, fontSize: 28, color: primary)),
-          const Text("Lorem ipsum dolor sit amet, consectetur.",
-              style: TextStyle(color: promptColor, fontWeight: FontWeight.w500)),
 
-          Gap.big,
+           const Align(
+            alignment: Alignment.centerLeft,
+            child: Text("Forgot password ?", style: TextStyle(fontWeight: FontWeight.w800, fontSize: 28, color: secondary)),
+          ),
+
+          const Align(
+            alignment: Alignment.centerLeft,
+            child: Text("Manage All Your Cash With Roova Book.",
+              style: TextStyle(color: text, fontWeight: FontWeight.w500, fontSize: 10)),
+          ),
+
+          Gap.large,
 
           TextInput(
               controller: AuthViewModel.emailController,
               labelText: "Email address",
               hintText: "Enter email address"),
 
-          Gap.big_50,
+          const Gap(size: 50,),
 
-          Align(
-            alignment: Alignment.center,
-            child: BlocBuilder<AuthBloc, AuthState>(
+          BlocBuilder<AuthBloc, AuthState>(
                 builder: (_, state){
                   return ButtonWL(
                       isLoading: state is AuthLoading,
-                      onPressed: ()=>context.read<AuthBloc>().add(ForgotPassword(
-                          email: AuthViewModel.emailController.text)),
+                      onPressed: (){
+                        if (viewModel.formGlobalKey.currentState!.validate()) {
+                          FocusScope.of(context).unfocus();                          
+                          context.read<AuthBloc>().add(ForgotPassword(
+                          email: AuthViewModel.emailController.text));
+                        }
+                      },
                       label: "Continue"
                   );
-                }),
-          ),
-
-          Gap.big_50,
-
-          Align(
-            alignment: Alignment.center,
-            child: SizedBox(
-              width: Dimensions.getScreenSize(context).width*0.75,
-              child: const Text("Lorem ipsum dolor sit amet, consectetur adipiscing elit.",
-                  textAlign: TextAlign.center,
-                  style: TextStyle(color: info, fontWeight: FontWeight.w500)),
-            ),
-          ),
+                })
         ],
-      ),
+      )),
     );
   }
 }

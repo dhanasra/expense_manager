@@ -48,14 +48,17 @@ class ButtonWL extends StatelessWidget {
           ),
           child: isLoading
               ? const SizedBox(height: 20, width: 20, child: CircularProgressIndicator(strokeWidth: 2))
-              : Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                    if(icon!=null) Icon(icon, color: isBorderOnly ? primary : null,),
-                    if(icon!=null) const SizedBox(width: 10,),
-                    Text(label, style: TextStyle(color: isBorderOnly ? primary : null),)
-                ],
-          )
+              : SizedBox(
+                child: Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                          if(icon!=null) Icon(icon, color: isBorderOnly ? primary : null,),
+                          if(icon!=null) const SizedBox(width: 10,),
+                          Text(label, style: TextStyle(color: isBorderOnly ? primary : null),)
+                      ],
+                )
+              )
       ),
     );
   }

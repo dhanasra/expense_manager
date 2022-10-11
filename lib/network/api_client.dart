@@ -21,7 +21,7 @@ class ApiInterceptors extends Interceptor {
   @override
   void onRequest(RequestOptions options, RequestInterceptorHandler handler) async{
 
-    final accessToken = await LocalDB.get(LocalDBKeys.accessToken);
+    final accessToken = await LocalStorage.getAccessToken();
     options.headers["Authorization"] = "Bearer $accessToken";
     options.headers["Content-Type"] = "application/json";
 
@@ -33,8 +33,10 @@ class ApiInterceptors extends Interceptor {
     if(err.response?.statusCode==401){
       RequestOptions? requestOptions = err.response?.requestOptions;
 
+      var rToken = await LocalStorage.getRefreshToken();
+
       AuthService service = AuthService(apiClient: dio);
-      dynamic result = await service.getAccessToken(refreshToken: testRefreshToken);
+      dynamic result = await service.getAccessToken(refreshToken: rToken!);
 
       var payload = result["data"]["payload"];
 
@@ -62,12 +64,13 @@ class ApiInterceptors extends Interceptor {
     if(response.statusCode==200){
       var data = response.data["data"];
 
-      if(data!=null && data.containsKey("data")){
-         var payload = response.data["payload"];
+      if(data!=null && data.containsKey("payload")){
+         var payload = data["payload"];
          if(payload.containsKey("access_token")){
             await LocalStorage.saveAccessToken(payload["access_token"]);
-         }else if(payload.containsKey("refresh_token")){
-           await LocalStorage.saveAccessToken(payload["refresh_token"]);
+         }
+         if(payload.containsKey("refresh_token")){
+           await LocalStorage.saveRefreshAccessToken(payload["refresh_token"]);
          }
       }
 

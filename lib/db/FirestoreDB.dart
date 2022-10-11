@@ -33,7 +33,6 @@ class DB {
       );
       return UserData.fromJson(userData);
     }catch(e){
-      print(e);
       return null;
     }
   }

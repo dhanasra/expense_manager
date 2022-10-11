@@ -48,13 +48,18 @@ class AppStyle {
       inputDecorationTheme: const InputDecorationTheme().copyWith(
         hintStyle: const TextStyle(
           fontSize: 14,
-          fontWeight: FontWeight.w500,
+          fontWeight: FontWeight.w600,
           color: promptColor,
         ),
         labelStyle: const TextStyle(
           fontSize: 14,
+          fontWeight: FontWeight.w600,
+          color: subText,
+        ),
+        errorStyle: const TextStyle(
+          fontSize: 10,
           fontWeight: FontWeight.w500,
-          color: Colors.grey,
+          color: error,
         ),
         contentPadding: const EdgeInsets.symmetric(vertical: 16, horizontal: 20),
         focusedBorder: OutlineInputBorder(
@@ -139,7 +144,7 @@ class AppStyle {
               )),
               textStyle: MaterialStateProperty.all(const TextStyle(
                 color: Colors.white,
-                fontWeight: FontWeight.w600,
+                fontWeight: FontWeight.w700,
                 fontFamily: "Poppins",
                 letterSpacing: 1
               ))

@@ -16,7 +16,7 @@ class SplashPage extends StatelessWidget {
         child: BlocListener<SplashBloc, SplashState>(
           listener: (_,state){
             const App().setNavigation(context, state is Login
-                ? AppRoutes.home
+                ? AppRoutes.welcome
                 : state is Profile
                 ? AppRoutes.profile
                 : AppRoutes.home);

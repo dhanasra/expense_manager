@@ -2,7 +2,7 @@
 import 'package:flutter/material.dart';
 
 //color codes
-const primary = Color(0xFF0000ff);
+const primary = Color.fromARGB(255, 0, 2, 100);
 const primary60 = Color(0xFFCF9FFF);
 const primary10 = Color(0xFFECEAFC);
 
@@ -42,10 +42,14 @@ const warning = Color(0xFFF1C232);
 
 //gradient
 const splashGradient = LinearGradient(
-    colors: [Color(0xFF00d09c),Color(0xFF66e3c4),Color(0xFF00d09c)],
+    colors: [
+      Color.fromARGB(255, 0, 0, 243),
+      Color.fromARGB(255, 28, 168, 70),
+      Color.fromARGB(255, 0, 0, 255)
+    ],
     stops: [0,0.5, 1],
-    begin: Alignment.topCenter,
-    end: Alignment.bottomCenter
+    begin: Alignment.topLeft,
+    end: Alignment.bottomRight
 );
 
 //dimensions

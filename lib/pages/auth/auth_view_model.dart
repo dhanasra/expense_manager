@@ -10,6 +10,8 @@ class AuthViewModel {
     return _instance;
   }
 
+  GlobalKey<FormState> formGlobalKey = GlobalKey<FormState>();
+
   PinTheme? defaultPinTheme;
   PinTheme? focusedPinTheme;
   PinTheme? submittedPinTheme;

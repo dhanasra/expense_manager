@@ -35,16 +35,20 @@ class CreateAccount extends AuthEvent {
     required this.confirmPassword});
 }
 
-class InitAccount extends AuthEvent {
+class CreateUser extends AuthEvent {
+  final String email;
   final String firstName;
   final String lastName;
+  final String mobileNumber;
   final Currency? defaultCurrency;
   final Map<String,String>? locale;
 
-  InitAccount({
+  CreateUser({
+    required this.email,
     required this.firstName,
     required this.lastName,
     required this.locale,
+    required this.mobileNumber,
     required this.defaultCurrency
   });
 }

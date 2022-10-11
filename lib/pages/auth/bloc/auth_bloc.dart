@@ -2,11 +2,11 @@
 import 'package:bloc/bloc.dart';
 import 'package:currency_picker/currency_picker.dart';
 import 'package:expense_manager/network/repos/services/auth_service.dart';
+import 'package:expense_manager/network/repos/services/user_service.dart';
 import 'package:expense_manager/utils/constants.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:meta/meta.dart';
 
-import '../../../db/FirestoreDB.dart';
 import '../../../db/local_db.dart';
 import '../../../db/model/user_data.dart';
 import '../../../network/api_client.dart';
@@ -20,7 +20,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
   AuthBloc() : super(AuthInitial()) {
     on<CheckIfLoginOrSignIn>(onCheckIfLoginOrSignIn);
     on<CreateAccount>(onCreateAccount);
-    on<InitAccount>(onInitAccount);
+    on<CreateUser>(onCreateUser);
     on<LoginEvent>(onLogin);
     on<ForgotPassword>(onForgotPassword);
     on<SetGlobalData>(onSetGlobalData);
@@ -29,15 +29,14 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
   void onSetGlobalData(SetGlobalData event, Emitter emit) async{
     emit(AuthLoading());
 
-    UserData? data = await DB.getUserData();
-
-    if(data!=null) {
-      await LocalDB.save(LocalDBKeys.name, data.firstName);
-      await LocalDB.save(LocalDBKeys.photo, data.picture??commonAvatar);
-    }
-
-    Globals.name = await LocalDB.get(LocalDBKeys.name);
-    Globals.photo = await LocalDB.get(LocalDBKeys.photo);
+    UserService service = UserService(apiClient: ApiClient().init());
+    var response = await service.getUser();
+    var userJson = response["data"]["user"];
+    var user = UserData.fromJson(userJson);
+    await LocalDB.save(LocalDBKeys.name, user.firstName);
+    await LocalDB.save(LocalDBKeys.photo, user.picture??commonAvatar);
+    Globals.name = user.firstName;
+    Globals.photo = user.picture??commonAvatar;
 
     emit(GlobalDataSetSuccess());
   }
@@ -58,32 +57,34 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     }
   }
 
-  void onInitAccount(InitAccount event, Emitter emit) async {
+  void onCreateUser(CreateUser event, Emitter emit) async {
     emit(InitLoading());
-
-    User user = FirebaseAuth.instance.currentUser!;
-
-    if(event.defaultCurrency==null || event.locale==null){
-      emit(AuthFailure(message: getErrorMessage("unknown", param: event.defaultCurrency==null ? "Currency" : "Language")));
-      return;
+    try{
+      UserService service = UserService(apiClient: ApiClient().init());
+      await service.createUser(
+        email: event.email, 
+        mobileNumber: event.mobileNumber,
+        fName: event.firstName,
+        lName: event.lastName,
+        locale: "ta",
+        defaultCurrency: "INR"
+      );
+      
+      await LocalDB.saveBool(LocalDBKeys.isFirstLaunch, false);
+      emit(AuthSuccess());
+    }on FirebaseAuthException catch(e){
+      String message = getErrorMessage(e.code);
+      emit(AuthFailure(message: message));
     }
-
-    await DB.setUpProfile(
-        user,
-        event.firstName,
-        event.lastName,
-        event.defaultCurrency!.code,
-        event.locale!["code"]!);
-
-    emit(AuthSuccess());
   }
 
   void onLogin(LoginEvent event, Emitter emit) async {
     emit(AuthLoading());
     try{
-      UserCredential userCredential =
-      await FirebaseAuth.instance.signInWithEmailAndPassword(email: event.email.trim(), password: event.password.trim());
-      userCredential.user;
+
+      AuthService service = AuthService(apiClient: ApiClient().init());
+      await service.signinWithEmail(email: event.email, password: event.password);
+      
       await LocalDB.saveBool(LocalDBKeys.isFirstLaunch, false);
       emit(AuthSuccess());
     }on FirebaseAuthException catch(e){
@@ -113,7 +114,8 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
   void onForgotPassword(ForgotPassword event, Emitter emit) async{
     emit(AuthLoading());
     try{
-      await FirebaseAuth.instance.sendPasswordResetEmail(email: event.email);
+      AuthService service = AuthService(apiClient: ApiClient().init());
+      await service.forgotPassword(email: event.email);
       emit(ResetLinkSent());
     }on FirebaseException catch(e){
       emit(ResetLinkFailure(message: getErrorMessage(e.code)));
