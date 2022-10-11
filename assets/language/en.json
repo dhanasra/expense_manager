@@ -1,0 +1,35 @@
+{
+
+    "app_name": "PADI",
+
+    "continue_with_google": "Continue with Google",
+    "signup_with_email": "Signup with Email",
+    "already_have_an_account?": "Already have an account?",
+    "don_have_an_account?": "Don't have an account?",
+    "sign_up": "Sign up",
+    "sign_in": "Sign In",
+    "title0": "Split your bills easily",
+    "content0": "Lorem ipsum dolor sit amet, consectetur adipiscing elit.",
+    "title1": "Manage all your payments",
+    "content1": "Lorem ipsum dolor sit amet, consectetur adipiscing elit.",
+    "title2": "Analyze your daily expenses",
+    "content2": "Lorem ipsum dolor sit amet, consectetur adipiscing elit.",
+
+    "signup": "Signup",
+    "explore_at": "Explore the best learning at ",
+    "email_address": "Email address",
+    "password": "Password",
+    "continue": "Continue",
+    "set_up_account": "Setting up account . . .",
+    "login": "Login",
+
+    "show_category" : "Show Category Field",
+    "show_category_desc_1" : "Categories are enabled for this book.",
+    "show_category_desc_2" : "Categories are disabled for this book. Turn on to add categories to your book",
+
+
+    "show_payment_mode" : "Show Payment Mode Field",
+    "show_payment_mode_desc_1" : "Payment modes are enabled for this book.",
+    "show_payment_mode_desc_2" : "Payment modes are disabled for this book. Turn on to add payment modes to your book"
+
+}
